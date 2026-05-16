@@ -1,6 +1,6 @@
 # Latency-Optimized Heterogeneous AI Accelerator for Vision Transformers
 
-Final Year Project — 7th Semester | Xilinx ZCU104 MPSoC
+Xilinx ZCU104 MPSoC
 
 ## 🚀 Key Visuals
 | Architecture | Performance |

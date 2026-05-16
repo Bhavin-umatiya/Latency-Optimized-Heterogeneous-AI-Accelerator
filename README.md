@@ -5,7 +5,7 @@ Xilinx ZCU104 MPSoC
 ## 🚀 Key Visuals
 | Architecture | Performance |
 | :---: | :---: |
-| ![Vivado Block Design](./results/bd_architecture.png) | ![Performance Comparison](./results/benchmark_results.png) |
+| ![Vivado Block Design](./results/bd_architecture.png) | ![Performance Comparison](./results/latency_comparison_graph.png) |
 | *Hardware Interconnect* | *ARM vs FPGA Latency* |
 
 ---

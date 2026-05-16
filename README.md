@@ -1,5 +1,14 @@
 # Latency-Optimized Heterogeneous AI Accelerator for Vision Transformers
 
+![Project Banner](./docs/architecture_notes.md) 
+*(Add your Block Design diagram here for a stunning header!)*
+
+## 🚀 Key Visuals
+| Architecture | Performance |
+| :---: | :---: |
+| ![Vivado Block Design](./results/block_design.png) | ![Performance Comparison](./results/performance_chart.png) |
+| *Hardware Interconnect* | *ARM vs FPGA Latency* |
+
 Final year project — 7th semester
 Platform: Xilinx ZCU104 MPSoC
 

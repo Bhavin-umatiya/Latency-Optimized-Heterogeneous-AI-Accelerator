@@ -4,12 +4,6 @@
 #include <ap_axi_sdata.h>
 #include <ap_fixed.h>
 #include <hls_stream.h>
-#include <hls_math.h>
-
-// Vector length — set to 768 for ViT attention (matches bench_768.py)
-#ifndef VIT_N
-#define VIT_N 768
-#endif
 
 typedef ap_fixed<16, 8> Data;
 // This 'pkt' structure includes the TLAST bit for the DMA

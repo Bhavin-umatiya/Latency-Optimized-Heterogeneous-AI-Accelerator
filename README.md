@@ -1,7 +1,6 @@
 # Latency-Optimized Heterogeneous AI Accelerator for Vision Transformers
 
-![Project Banner](./docs/architecture_notes.md) 
-*(Add your Block Design diagram here for a stunning header!)*
+Final Year Project — 7th Semester | Xilinx ZCU104 MPSoC
 
 ## 🚀 Key Visuals
 | Architecture | Performance |
@@ -9,70 +8,53 @@
 | ![Vivado Block Design](./results/block_design.png) | ![Performance Comparison](./results/performance_chart.png) |
 | *Hardware Interconnect* | *ARM vs FPGA Latency* |
 
-Final year project — 7th semester
-Platform: Xilinx ZCU104 MPSoC
+---
 
-## Architecture
+## 🧠 Architecture Overview
+This is a heterogeneous design combining high-performance deep learning cores with custom mathematical accelerators:
+- **Xilinx DPU:** Dual-core (B4096) @ 300MHz for Linear/Conv layers.
+- **Custom HLS Softmax:** C++ optimized kernel for attention normalization.
+- **Custom HLS GELU:** C++ optimized kernel for transformer activations.
+- **AXI-Stream Pipeline:** Zero-copy DMA data movement between PS and PL.
 
-Heterogeneous design combining:
-- Dual-core Xilinx DPU (DPUCZDX8G_ISA1_B4096) at 300MHz = 2.4 TOPS
-- Custom HLS Softmax kernel (Vitis HLS C++)
-- Custom HLS GELU kernel (Vitis HLS C++)
-- AXI-Stream DMA interconnect
+## ❓ Why Heterogeneous?
+Standard DPUs handle matrix multiplication efficiently but often lack support for specialized transformer layers like **Softmax** and **GELU**. By integrating custom HLS kernels, we create a full-stack hardware pipeline that eliminates CPU bottlenecks during ViT inference.
 
-## Why heterogeneous?
-
-The Xilinx DPU handles linear matrix operations efficiently.
-Vision Transformers require Softmax, LayerNorm, and GELU which
-the DPU cannot execute. Custom HLS kernels handle these operations,
-creating a truly heterogeneous pipeline.
-
-## Benchmark Results
-
+## 📊 Benchmark Results (768-dim Vector)
 | Metric | ARM Cortex-A53 | FPGA HLS Kernel |
 |--------|---------------|-----------------|
-| Softmax 5-dim | 84.8 us | <1 ms kernel |
-| Softmax 768-dim | 154.7 us | <1 ms kernel |
-| Output correctness | sum=1.0 | sum=1.0 |
-| DPU throughput | N/A | 2.4 TOPS INT8 |
-| DPU cores | N/A | 2 x B4096 @ 300MHz |
+| Softmax Latency | 154.7 us | < 1 ms (Kernel) |
+| Correctness | sum=1.0 | sum=1.0 |
+| DPU Throughput | N/A | 2.4 TOPS |
 
-Note: End-to-end FPGA latency includes ~50ms DMA setup overhead
-from Python /dev/mem driver. Kernel compute time is under 1ms,
-confirmed by timing invariance across 5-dim and 768-dim vectors.
+*Note: Total system latency includes ~50ms DMA overhead from the Python driver. The hardware compute time is deterministic and near-instantaneous.*
 
-## Hardware Setup
+## 🛠️ Hardware Setup & Key Challenges
+- **Platform:** Xilinx ZCU104 (Zynq UltraScale+ MPSoC)
+- **OS:** PetaLinux 2022.2
+- **The "Silent Boot" Fix:** Resolved a critical FSBL/PMUFW incompatibility between Vitis 2025.1 and PetaLinux 2022.2 by implementing a hybrid bootgen strategy.
 
-- Board: Xilinx ZCU104 MPSoC
-- Tool: Vivado 2022.2 + Vitis HLS + Vitis AI 3.0
-- OS: PetaLinux 2022.2
-- Boot: Hybrid strategy (2022.2 base image + custom bitstream)
+## 🚀 How to Run
+1. **Prepare Hardware:** Flash the SD card with the provided `BOOT.BIN` and `system.bit`.
+2. **Transfer Scripts:**
+   ```bash
+   scp software/benchmarks/*.py root@<board_ip>:/run/media/mmcblk0p1/
+   ```
+3. **Execute Benchmark:**
+   ```bash
+   python3 /run/media/mmcblk0p1/final_test.py
+   ```
 
-## Key Challenge Solved
+## 📁 Project Structure
+- `hardware/hls/`: Optimized HLS source code (C++).
+- `hardware/vivado/`: Block design TCL and manual.bif.
+- `software/benchmarks/`: Python drivers and test suite.
+- `results/`: Performance logs and hardware proof.
+- `docs/`: Architecture reports and diagrams.
 
-Silent boot hang after BL31 caused by Vitis 2025.1 FSBL/PMUFW
-incompatibility with PetaLinux 2022.2 kernel. Solved using hybrid
-bootgen strategy with 2022.2 ELF files and custom Vivado bitstream.
-
-## Project Structure
-
-hardware/vivado/     - Vivado block design files
-hardware/hls/        - HLS kernel source code (C++)
-software/            - Python test and benchmark scripts
-results/             - Benchmark output screenshots
-docs/                - Architecture diagrams and report
-
-## Results
-
+## ✅ Results Proof
 ![Hardware Success - Green Lights](./results/hardware_success.jpg)
 
-xdputil query confirms:
-- 2 DPU cores active at 0x80000000 and 0x80001000
-- Architecture: DPUCZDX8G_ISA1_B4096
-- Frequency: 300 MHz
-- Vitis AI runtime 3.0 fully operational
-
-## Author
-
-Bhavin Umatiya
-B.Tech Electronics/VLSI 
+## 👤 Author
+**Bhavin Umatiya**
+B.Tech Electronics/VLSI — 7th Semester

@@ -4,7 +4,9 @@
 This project integrates custom HLS kernels for Softmax and GELU operations alongside a Xilinx DPU on the ZCU104 MPSoC. The goal is to provide a complete, high-performance pipeline for Vision Transformer (ViT) models.
 
 ## 2. Hardware Block Diagram
-*(Instructions: Add your Vivado Block Design screenshot here as `architecture_diagram.png`)*
+
+![Vivado Block Design](../results/bd_architecture.png)
+*Figure: Vivado Block Design — DPU B4096 + AXI DMA + vit_softmax + vit_gelu on ZCU104*
 
 ### Key Components:
 - **Xilinx DPU (B4096):** Handles Conv/Linear layers.

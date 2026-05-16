@@ -5,7 +5,7 @@ Final Year Project — 7th Semester | Xilinx ZCU104 MPSoC
 ## 🚀 Key Visuals
 | Architecture | Performance |
 | :---: | :---: |
-| ![Vivado Block Design](./results/block_design.png) | ![Performance Comparison](./results/performance_chart.png) |
+| ![Vivado Block Design](./results/bd_architecture.png) | ![Performance Comparison](./results/benchmark_results.png) |
 | *Hardware Interconnect* | *ARM vs FPGA Latency* |
 
 ---
@@ -23,16 +23,28 @@ Standard DPUs handle matrix multiplication efficiently but often lack support fo
 ## 📊 Benchmark Results (768-dim Vector)
 | Metric | ARM Cortex-A53 | FPGA HLS Kernel |
 |--------|---------------|-----------------|
-| Softmax Latency | 154.7 us | < 1 ms (Kernel) |
-| Correctness | sum=1.0 | sum=1.0 |
+| Softmax Latency | 154.7 µs | **< 1 µs** (pure compute) |
+| System Latency (incl. DMA) | 154.7 µs | ~50 ms (Python `/dev/mem`) |
+| Output Correctness | sum = 1.0 ✅ | sum = 1.0 ✅ |
 | DPU Throughput | N/A | 2.4 TOPS |
 
-*Note: Total system latency includes ~50ms DMA overhead from the Python driver. The hardware compute time is deterministic and near-instantaneous.*
+> **Note:** The ~50 ms system latency is dominated by Python `mmap`/`/dev/mem` DMA setup overhead, not kernel compute time. The HLS fabric computes in under 1 µs at 300 MHz. A production C/UIO driver would eliminate this gap.
 
 ## 🛠️ Hardware Setup & Key Challenges
 - **Platform:** Xilinx ZCU104 (Zynq UltraScale+ MPSoC)
 - **OS:** PetaLinux 2022.2
-- **The "Silent Boot" Fix:** Resolved a critical FSBL/PMUFW incompatibility between Vitis 2025.1 and PetaLinux 2022.2 by implementing a hybrid bootgen strategy.
+- **HLS Tool:** Vitis HLS 2025.1
+- **Block Design:** Vivado 2022.2 (reproduced via `hardware/vivado/vit_accelerator_bd.tcl`)
+- **The "Silent Boot" Fix:** Resolved a critical FSBL/PMUFW incompatibility between Vitis 2025.1 and PetaLinux 2022.2 by implementing a hybrid `bootgen` strategy using `manual.bif`.
+
+## 📦 Prerequisites
+```bash
+# On the ZCU104 board (PetaLinux 2022.2)
+pip3 install numpy
+
+# On host (for block design rebuild)
+# Vivado 2022.2 + Vitis HLS 2025.1
+```
 
 ## 🚀 How to Run
 1. **Prepare Hardware:** Flash the SD card with the provided `BOOT.BIN` and `system.bit`.
@@ -58,3 +70,6 @@ Standard DPUs handle matrix multiplication efficiently but often lack support fo
 ## 👤 Author
 **Bhavin Umatiya**
 B.Tech Electronics/VLSI — 7th Semester
+
+[![GitHub](https://img.shields.io/badge/GitHub-Bhavin--umatiya-181717?logo=github)](https://github.com/Bhavin-umatiya)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin)](https://www.linkedin.com/in/bhavin-umatiya/)

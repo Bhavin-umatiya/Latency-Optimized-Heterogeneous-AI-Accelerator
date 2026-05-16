@@ -1,5 +1,5 @@
 #include "gelu.h"
-#include <cmath>
+#include <hls_math.h>
 
 void vit_gelu(hls::stream<pkt> &in_stream, hls::stream<pkt> &out_stream) {
     #pragma HLS interface axis port=in_stream
@@ -7,12 +7,13 @@ void vit_gelu(hls::stream<pkt> &in_stream, hls::stream<pkt> &out_stream) {
     #pragma HLS interface s_axilite port=return bundle=control
 
     for(int i = 0; i < 128; i++) {
+#pragma HLS PIPELINE II=1
         pkt in_pkt = in_stream.read();
         Data x = in_pkt.data;
         
         // Fast GELU approximation: x * sigmoid(1.702 * x)
         float x_f = (float)x;
-        float gelu_f = x_f * (1.0f / (1.0f + exp(-1.702f * x_f)));
+        float gelu_f = x_f * (1.0f / (1.0f + hls::exp(-1.702f * x_f)));
         
         pkt out_pkt;
         out_pkt.data = (Data)gelu_f;

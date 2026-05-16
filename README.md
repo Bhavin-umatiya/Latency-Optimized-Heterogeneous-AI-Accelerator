@@ -55,6 +55,8 @@ docs/                - Architecture diagrams and report
 
 ## Results
 
+![Hardware Success - Green Lights](./results/hardware_success.jpg)
+
 xdputil query confirms:
 - 2 DPU cores active at 0x80000000 and 0x80001000
 - Architecture: DPUCZDX8G_ISA1_B4096

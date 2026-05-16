@@ -95,7 +95,7 @@ pip3 install numpy
 
 ## 👤 Author
 **Bhavin Umatiya**
-B.Tech Electronics/VLSI — 7th Semester
+B.Tech Electronics & communication
 
 [![GitHub](https://img.shields.io/badge/GitHub-Bhavin--umatiya-181717?logo=github)](https://github.com/Bhavin-umatiya)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin)](https://www.linkedin.com/in/bhavin-umatiya/)

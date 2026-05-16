@@ -66,4 +66,4 @@ xdputil query confirms:
 ## Author
 
 Bhavin Umatiya
-B.Tech Electronics/VLSI — 7th Semester
+B.Tech Electronics/VLSI 

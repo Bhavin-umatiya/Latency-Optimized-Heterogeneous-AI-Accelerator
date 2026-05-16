@@ -20,15 +20,26 @@ This is a heterogeneous design combining high-performance deep learning cores wi
 ## ❓ Why Heterogeneous?
 Standard DPUs handle matrix multiplication efficiently but often lack support for specialized transformer layers like **Softmax** and **GELU**. By integrating custom HLS kernels, we create a full-stack hardware pipeline that eliminates CPU bottlenecks during ViT inference.
 
-## 📊 Benchmark Results (768-dim Vector)
+## 📊 Benchmark Results — Measured on ZCU104 Hardware
+
+### 5-Element Test Vector `[1.0, 2.0, 3.0, 4.0, 5.0]`
 | Metric | ARM Cortex-A53 | FPGA HLS Kernel |
 |--------|---------------|-----------------|
-| Softmax Latency | 154.7 µs | **< 1 µs** (pure compute) |
-| System Latency (incl. DMA) | 154.7 µs | ~50 ms (Python `/dev/mem`) |
+| Softmax Latency | **84.8 µs** | < 1 µs (pure fabric compute) |
+| System Latency | 84.8 µs | **~50.1 ms** (Python `/dev/mem`) |
 | Output Correctness | sum = 1.0 ✅ | sum = 1.0 ✅ |
+| Top Class | cls 4 | cls 4 ✅ |
+
+### 768-Dimension ViT Attention Vector
+| Metric | ARM Cortex-A53 | FPGA HLS Kernel |
+|--------|---------------|-----------------|
+| Softmax Latency | **154.69 µs** (0.155 ms) | < 1 µs (fabric only) |
+| System Latency | 154.69 µs | **~50.1 ms** (Python `/dev/mem`) |
+| Output Correctness | sum = 1.0 ✅ | sum = 1.0 ✅ |
+| Top-3 Indices (ARM) | [209, 478, 179] | — |
 | DPU Throughput | N/A | 2.4 TOPS |
 
-> **Note:** The ~50 ms system latency is dominated by Python `mmap`/`/dev/mem` DMA setup overhead, not kernel compute time. The HLS fabric computes in under 1 µs at 300 MHz. A production C/UIO driver would eliminate this gap.
+> **Why ~50 ms?** The system latency is entirely dominated by the Python `mmap`/`/dev/mem` DMA driver overhead (register writes + `time.sleep()`). The HLS Softmax and GELU kernels compute in **< 1 µs** at 300 MHz on the FPGA fabric. A production C or UIO-based driver would reduce system latency to match the raw hardware compute time.
 
 ## 🛠️ Hardware Setup & Key Challenges
 - **Platform:** Xilinx ZCU104 (Zynq UltraScale+ MPSoC)
@@ -47,14 +58,29 @@ pip3 install numpy
 ```
 
 ## 🚀 How to Run
-1. **Prepare Hardware:** Flash the SD card with the provided `BOOT.BIN` and `system.bit`.
-2. **Transfer Scripts:**
+1. **Load the bitstream:**
+   ```bash
+   cd /run/media/mmcblk0p1
+   fpgautil -b system.bit
+   # Expected: "BIN FILE loaded through FPGA manager successfully"
+   ```
+2. **Verify hardware is alive:**
+   ```bash
+   devmem 0xA0000000   # DMA   -> expect 0x00010002 (Idle)
+   devmem 0xB0000000   # GELU  -> expect 0x00000004 (ap_idle)
+   devmem 0xB0010000   # Softmax -> expect 0x00000004 (ap_idle)
+   ```
+3. **Transfer benchmark scripts:**
    ```bash
    scp software/benchmarks/*.py root@<board_ip>:/run/media/mmcblk0p1/
    ```
-3. **Execute Benchmark:**
+4. **Run 5-element benchmark:**
    ```bash
    python3 /run/media/mmcblk0p1/final_test.py
+   ```
+5. **Run 768-dim ViT benchmark:**
+   ```bash
+   python3 /run/media/mmcblk0p1/bench_768.py
    ```
 
 ## 📁 Project Structure

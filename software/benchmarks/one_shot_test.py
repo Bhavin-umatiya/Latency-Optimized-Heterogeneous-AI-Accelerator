@@ -31,29 +31,29 @@ with open("/dev/mem", "r+b") as f:
     write_reg(mem_gelu, 0x00, 0x0)
     time.sleep(0.1)
 
-    # 2. Start Kernels in "One-Shot" mode (0x01)
+    # 2. Start Kernels in "One-Shot" mode (ap_start = bit0)
     write_reg(mem_soft, 0x00, 0x01)
     write_reg(mem_gelu, 0x00, 0x01)
 
-    # 3. Setup DMA Receive
-    write_reg(mem_dma, 0x30, 0x1) 
+    # 3. Setup DMA Receive (S2MM)
+    write_reg(mem_dma, 0x30, 0x1)
     write_reg(mem_dma, 0x48, RAM_OUT)
-    write_reg(mem_dma, 0x58, 256)
+    write_reg(mem_dma, 0x58, 256)    # 128 elements * 2 bytes
 
-    # 4. Setup DMA Send
+    # 4. Setup DMA Send (MM2S)
     write_reg(mem_dma, 0x00, 0x1)
     write_reg(mem_dma, 0x18, RAM_IN)
-    write_reg(mem_dma, 0x28, 256)
+    write_reg(mem_dma, 0x28, 256)    # 128 elements * 2 bytes
 
     print("Transfer started...")
     time.sleep(1)
 
-    print(f"Softmax Done? {hex(read_reg(mem_soft, 0x00))}")
-    print(f"GELU Done?    {hex(read_reg(mem_gelu, 0x00))}")
-    print(f"DMA S2MM SR:  {hex(read_reg(mem_dma, 0x34))}")
+    print("Softmax Done? " + hex(read_reg(mem_soft, 0x00)))
+    print("GELU Done?    " + hex(read_reg(mem_gelu, 0x00)))
+    print("DMA S2MM SR:  " + hex(read_reg(mem_dma, 0x34)))
 
     # Read back 5 values
     print("\n--- Result Check ---")
     for i in range(5):
         mem_out.seek(i*2)
-        print(f"Val {i}: {struct.unpack('H', mem_out.read(2))[0]}")
+        print("Val " + str(i) + ": " + str(struct.unpack('H', mem_out.read(2))[0]))

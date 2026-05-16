@@ -1,0 +1,8 @@
+the_ROM_image:
+{
+	[bootloader, destination_cpu = a53-0] "B:\Neauromorphic\Summer26\new_ip_hetro\export\new_ip_hetro\sw\boot\fsbl.elf"
+    [pmufw_image] "B:\Neauromorphic\Summer26\new_ip_hetro\zynqmp_pmufw\build\pmufw.elf"
+	[destination_cpu = a53-0, exception_level = el-3] "B:\Neauromorphic\Summer26\new_ip_hetro\bl31.elf"
+	[destination_cpu = a53-0, exception_level = el-2] "B:\Neauromorphic\Summer26\new_ip_hetro\u-boot.elf"
+	[destination_device = pl] "B:\Neauromorphic\Summer26\Heterogeneous\Heterogeneous.runs\impl_1\system_wrapper.bit"
+}

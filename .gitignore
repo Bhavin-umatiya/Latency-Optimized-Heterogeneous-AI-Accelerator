@@ -1,0 +1,11 @@
+*.jou
+*.log
+*.str
+*.pb
+*.xml
+.Xil/
+vivado_pid*.str
+__pycache__/
+*.pyc
+*.dcp
+*.bit

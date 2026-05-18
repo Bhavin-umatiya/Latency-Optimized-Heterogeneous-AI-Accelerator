@@ -34,8 +34,8 @@ graph TD
         hls -->|Zero-Copy Local Buffering| dpu_next[3. DPU Continues Next Layer]
     end
 
-    style cpu fill:#ffd2d2,stroke:#d9534f,stroke-width:2px
-    style hls fill:#d4edda,stroke:#5cb85c,stroke-width:2px
+    style cpu fill:#ffd2d2,stroke:#d9534f,stroke-width:2px,color:#000
+    style hls fill:#d4edda,stroke:#5cb85c,stroke-width:2px,color:#000
 ```
 
 In standard edge deployments, this leads to a costly **CPU-FPGA memory ping-pong bottleneck**:

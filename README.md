@@ -31,6 +31,11 @@ In standard edge deployments, this leads to a costly **CPU-FPGA memory ping-pong
 
 ## 📊 Benchmark Results — Measured on ZCU104 Hardware
 
+> [!NOTE]
+> **Important Note on Console Screenshots (~50 ms vs ~11 µs):**
+> If you run the python benchmark scripts (`final_test.py` / `bench_768.py`) or look at the terminal screenshots, the output will show a system latency of **~50 ms**. 
+> This is a conservative, hardcoded `time.sleep(0.05)` delay inside the high-level Python wrapper to guarantee safe DMA sync on PetaLinux. The raw physical execution time on the FPGA fabric (HLS kernel compute + hardware AXI DMA transfer) is indeed **~11.0 µs**.
+
 ### 5-Element Test Vector `[1.0, 2.0, 3.0, 4.0, 5.0]`
 | Metric | ARM Cortex-A53 | FPGA HLS Kernel (ZCU104) |
 |--------|---------------|-----------------|

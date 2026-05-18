@@ -30,7 +30,7 @@ graph TD
     end
 
     subgraph Our Heterogeneous Pipeline (Direct Hardware PL Streaming)
-        dpu_our[1. DPU Computes GEMM] -->|High-Speed AXI4-Stream| hls[2. Custom PL HLS Kernel - < 1 µs]
+        dpu_our[1. DPU Computes GEMM] -->|High-Speed AXI4-Stream| hls["2. Custom PL HLS Kernel (< 1 µs)"]
         hls -->|Zero-Copy Local Buffering| dpu_next[3. DPU Continues Next Layer]
     end
 

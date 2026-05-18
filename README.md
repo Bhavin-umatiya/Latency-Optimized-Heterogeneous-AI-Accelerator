@@ -20,6 +20,24 @@ This is a heterogeneous design combining high-performance deep learning cores wi
 ## ❓ Why Heterogeneous? (The "Non-GEMM" Bottleneck)
 Standard Deep Learning Accelerators (like the Xilinx DPU or custom ASICs) are highly optimized for high-throughput Matrix Multiplication (GEMM) but lack native hardware support for complex non-linear operations like **Softmax** (which requires divisions and exponentials) and **GELU** activations. 
 
+### 🔄 System Architecture Comparison
+
+```mermaid
+graph TD
+    subgraph Standard Pipeline (Costly CPU-FPGA Ping-Pong)
+        dpu1[1. DPU Computes GEMM] -->|DDR Copy & OS Context Switch| cpu[2. ARM CPU Computes Softmax - 154.69 µs]
+        cpu -->|DDR Copy & Register Writes| dpu2[3. DPU Continues Next Layer]
+    end
+
+    subgraph Our Heterogeneous Pipeline (Direct Hardware PL Streaming)
+        dpu_our[1. DPU Computes GEMM] -->|High-Speed AXI4-Stream| hls[2. Custom PL HLS Kernel - < 1 µs]
+        hls -->|Zero-Copy Local Buffering| dpu_next[3. DPU Continues Next Layer]
+    end
+
+    style cpu fill:#ffd2d2,stroke:#d9534f,stroke-width:2px
+    style hls fill:#d4edda,stroke:#5cb85c,stroke-width:2px
+```
+
 In standard edge deployments, this leads to a costly **CPU-FPGA memory ping-pong bottleneck**:
 1. The DPU computes a dense linear layer.
 2. The tensor is transferred back to the ARM CPU to calculate Softmax in software (taking a slow **154.69 µs**).

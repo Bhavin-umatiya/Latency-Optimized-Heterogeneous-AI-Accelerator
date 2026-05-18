@@ -24,12 +24,12 @@ Standard Deep Learning Accelerators (like the Xilinx DPU or custom ASICs) are hi
 
 ```mermaid
 graph TD
-    subgraph Standard Pipeline (Costly CPU-FPGA Ping-Pong)
+    subgraph id1 ["Standard Pipeline (Costly CPU-FPGA Ping-Pong)"]
         dpu1[1. DPU Computes GEMM] -->|DDR Copy & OS Context Switch| cpu[2. ARM CPU Computes Softmax - 154.69 µs]
         cpu -->|DDR Copy & Register Writes| dpu2[3. DPU Continues Next Layer]
     end
 
-    subgraph Our Heterogeneous Pipeline (Direct Hardware PL Streaming)
+    subgraph id2 ["Our Heterogeneous Pipeline (Direct Hardware PL Streaming)"]
         dpu_our[1. DPU Computes GEMM] -->|High-Speed AXI4-Stream| hls["2. Custom PL HLS Kernel (< 1 µs)"]
         hls -->|Zero-Copy Local Buffering| dpu_next[3. DPU Continues Next Layer]
     end

@@ -17,8 +17,17 @@ This is a heterogeneous design combining high-performance deep learning cores wi
 - **Custom HLS GELU:** C++ optimized kernel for transformer activations.
 - **AXI-Stream Pipeline:** Zero-copy DMA data movement between PS and PL.
 
-## ❓ Why Heterogeneous?
-Standard DPUs handle matrix multiplication efficiently but often lack support for specialized transformer layers like **Softmax** and **GELU**. By integrating custom HLS kernels, we create a full-stack hardware pipeline that eliminates CPU bottlenecks during ViT inference.
+## ❓ Why Heterogeneous? (The "Non-GEMM" Bottleneck)
+Standard Deep Learning Accelerators (like the Xilinx DPU or custom ASICs) are highly optimized for high-throughput Matrix Multiplication (GEMM) but lack native hardware support for complex non-linear operations like **Softmax** (which requires divisions and exponentials) and **GELU** activations. 
+
+In standard edge deployments, this leads to a costly **CPU-FPGA memory ping-pong bottleneck**:
+1. The DPU computes a dense linear layer.
+2. The tensor is transferred back to the ARM CPU to calculate Softmax in software (taking a slow **154.69 µs**).
+3. The normalized data is transferred back to the DPU for the next layer.
+
+**Our Solution:** By integrating custom, hardware-optimized Vitis HLS kernels directly into the AXI4-Stream pipeline in the Programmable Logic (PL), we keep the data entirely on the FPGA fabric. Normalization and activations are executed in **< 1 µs**, completely eliminating CPU memory overhead and context switching.
+
+*This heterogeneous design directly mirrors state-of-the-art industry architectures, such as the specialized **Transformer Engine** in NVIDIA's Hopper/Blackwell GPUs and the vector activation units in Google's Tensor Processing Units (TPUs).*
 
 ## 📊 Benchmark Results — Measured on ZCU104 Hardware
 

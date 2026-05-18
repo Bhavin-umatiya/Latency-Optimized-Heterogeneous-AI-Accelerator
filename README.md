@@ -32,10 +32,11 @@ In standard edge deployments, this leads to a costly **CPU-FPGA memory ping-pong
 ## 📊 Benchmark Results — Measured on ZCU104 Hardware
 
 ### 5-Element Test Vector `[1.0, 2.0, 3.0, 4.0, 5.0]`
-| Metric | ARM Cortex-A53 | FPGA HLS Kernel |
+| Metric | ARM Cortex-A53 | FPGA HLS Kernel (ZCU104) |
 |--------|---------------|-----------------|
-| Softmax Latency | **84.8 µs** | < 1 µs (pure fabric compute) |
-| System Latency | 84.8 µs | **~50.1 ms** (Python `/dev/mem`) |
+| Fabric Compute Latency | **84.8 µs** | **< 1 µs** (pure fabric compute) |
+| Hardware + DMA Latency | N/A | **~11.0 µs** (hardware + AXI DMA transfer) |
+| End-to-End System Latency | 84.8 µs | **~50.1 ms** (Python `/dev/mem` driver) |
 | Output Correctness | sum = 1.0 ✅ | sum = 1.0 ✅ |
 | Top Class | cls 4 | cls 4 ✅ |
 
